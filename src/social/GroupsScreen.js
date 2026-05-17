@@ -1,0 +1,1 @@
+import React from 'react'; import { View, Text } from 'react-native'; export default function GroupsScreen(){return <View style={{flex:1,padding:20}}><Text accessibilityRole='header'>Grupos de doação</Text><Text>Em desenvolvimento com persistência local e ranking mock.</Text></View>}
