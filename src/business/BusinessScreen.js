@@ -1,0 +1,1 @@
+import React from 'react'; import { View, Text } from 'react-native'; export default function BusinessScreen(){return <View style={{flex:1,padding:20}}><Text>Para Empresas</Text><Text>Formulário B2B e seção para hemocentros.</Text></View>}

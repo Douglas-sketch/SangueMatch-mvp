@@ -107,3 +107,9 @@ npx expo-doctor@latest
 ```
 
 Isso ajusta versões compatíveis no seu ambiente se algum pacote mudar de patch.
+
+## Novidades MVP v2
+- BloodQuest na aba Quest.
+- Assistente IA (Anthropic) em Posso Doar?.
+- Estruturas iniciais: /src/game /src/social /src/business /src/ai.
+- Mock API em /mock/hemocenterApi.js.
