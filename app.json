@@ -1,0 +1,65 @@
+{
+  "expo": {
+    "name": "SangueMatch",
+    "slug": "sanguematch",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "sanguematch",
+    "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "O SangueMatch usa sua localização para encontrar hemocentros próximos."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/notification-icon.png",
+          "color": "#E05252",
+          "defaultChannel": "lembretes"
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": []
+        }
+      ]
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sanguematch.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "O SangueMatch usa sua localização para encontrar hemocentros próximos.",
+        "NSUserNotificationsUsageDescription": "O SangueMatch envia lembretes sobre seus agendamentos de doação."
+      },
+      "config": {
+        "googleMapsApiKey": "COLOQUE_SUA_GOOGLE_MAPS_IOS_KEY_AQUI"
+      }
+    },
+    "android": {
+      "package": "com.sanguematch.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E05252"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "COLOQUE_SUA_GOOGLE_MAPS_ANDROID_KEY_AQUI"
+        }
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "00000000-0000-0000-0000-000000000000"
+      }
+    }
+  }
+}
