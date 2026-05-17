@@ -1,0 +1,62 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build SangueMatch APK
+    runs-on: ubuntu-latest
+
+    env:
+      EXPO_PUBLIC_GOOGLE_PLACES_KEY: ${{ secrets.EXPO_PUBLIC_GOOGLE_PLACES_KEY }}
+      GOOGLE_MAPS_ANDROID_KEY: ${{ secrets.GOOGLE_MAPS_ANDROID_KEY }}
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Criar .env
+        run: |
+          echo "EXPO_PUBLIC_GOOGLE_PLACES_KEY=${EXPO_PUBLIC_GOOGLE_PLACES_KEY}" > .env
+
+      - name: Gerar projeto Android
+        run: npx expo prebuild --platform android --clean --no-install
+
+      - name: Dar permissão ao Gradle
+        run: chmod +x android/gradlew
+
+      - name: Gerar APK
+        run: |
+          cd android
+          ./gradlew :app:assembleRelease
+
+      - name: Copiar APK
+        run: |
+          mkdir -p build-output
+          cp android/app/build/outputs/apk/release/app-release.apk build-output/SangueMatch.apk
+
+      - name: Enviar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SangueMatch-APK
+          path: build-output/SangueMatch.apk
