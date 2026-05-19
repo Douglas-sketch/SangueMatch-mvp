@@ -56,13 +56,8 @@
         "POST_NOTIFICATIONS",
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-<<<<<<< HEAD
-        "WRITE_EXTERNAL_STORAGE",
-        "MEDIA_LIBRARY"
-=======
         "WRITE_EXTERNAL_STORAGE"
->>>>>>> 78fb240 (Correções)
-      ],
+    ],
       "config": {
         "googleMaps": {
           "apiKey": "COLOQUE_SUA_GOOGLE_MAPS_ANDROID_KEY_AQUI"
