@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Button from '../components/Button';
@@ -36,6 +36,7 @@ export default function RegisterScreen({ navigation }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const errors = useMemo(() => validateStep(step, form), [step, form]);
   const canContinue = Object.keys(errors).length === 0;
 
@@ -59,6 +60,7 @@ export default function RegisterScreen({ navigation }) {
         email: form.email.trim().toLowerCase(),
         birthDate: form.birthDate,
         bloodType: form.bloodType || 'Não sei',
+        termsAcceptedAt: new Date().toISOString(),
         permissions: {
           location: locationResult.granted,
           notifications: notificationsGranted,
@@ -88,6 +90,12 @@ export default function RegisterScreen({ navigation }) {
             <Input label="E-mail" value={form.email} onChangeText={(v) => update('email', v)} error={errors.email} keyboardType="email-address" autoCapitalize="none" />
             <Input label="Senha" value={form.password} onChangeText={(v) => update('password', v)} error={errors.password} secureTextEntry />
             <Input label="Data de nascimento" value={form.birthDate} onChangeText={(v) => update('birthDate', v)} error={errors.birthDate} placeholder="DD/MM/AAAA" keyboardType="numbers-and-punctuation" />
+
+            <Pressable onPress={() => setTermsAccepted((v) => !v)} style={styles.termsRow}>
+              <MaterialCommunityIcons name={termsAccepted ? 'checkbox-marked' : 'checkbox-blank-outline'} color={colors.primary} size={22} />
+              <Text style={styles.permissionBody}>Li e aceito os </Text>
+              <Pressable onPress={() => navigation.navigate('Terms')}><Text style={[styles.permissionBody, { color: colors.primary }]}>Termos de Uso e Política de Privacidade</Text></Pressable>
+            </Pressable>
           </AnimatedView>
         ) : null}
 
@@ -120,7 +128,7 @@ export default function RegisterScreen({ navigation }) {
 
       <View style={styles.footer}>
         {step > 0 ? <Button title="Voltar" variant="ghost" onPress={() => setStep((current) => current - 1)} /> : null}
-        <Button title={step === 2 ? 'Finalizar cadastro' : 'Continuar'} onPress={next} disabled={!canContinue} loading={loading} />
+        <Button title={step === 2 ? 'Finalizar cadastro' : 'Continuar'} onPress={next} disabled={!canContinue || (step === 2 && !termsAccepted)} loading={loading} />
       </View>
     </KeyboardAvoidingView>
   );
@@ -136,6 +144,7 @@ const styles = StyleSheet.create({
   progressActive: { backgroundColor: colors.primary },
   footer: { padding: 24, gap: 12, backgroundColor: colors.background },
   error: { color: colors.primary, fontFamily: fonts.semi, marginTop: 10 },
+  termsRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 8 },
   permissionCard: { backgroundColor: '#fff', borderRadius: 22, padding: 18, borderWidth: 0.5, borderColor: colors.line, flexDirection: 'row', gap: 14, marginBottom: 14 },
   permissionTitle: { fontFamily: fonts.displayBold, color: colors.secondary, fontSize: 20 },
   permissionBody: { fontFamily: fonts.regular, color: colors.muted, lineHeight: 21, marginTop: 4 },

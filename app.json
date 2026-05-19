@@ -6,7 +6,9 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "scheme": "sanguematch",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "plugins": [
       [
         "expo-location",
@@ -34,7 +36,9 @@
       "bundleIdentifier": "com.sanguematch.app",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "O SangueMatch usa sua localização para encontrar hemocentros próximos.",
-        "NSUserNotificationsUsageDescription": "O SangueMatch envia lembretes sobre seus agendamentos de doação."
+        "NSUserNotificationsUsageDescription": "O SangueMatch envia lembretes sobre seus agendamentos de doação.",
+        "NSCameraUsageDescription": "O SangueMatch usa a câmera para você atualizar sua foto de perfil.",
+        "NSPhotoLibraryUsageDescription": "O SangueMatch acessa sua galeria para você escolher uma foto de perfil."
       },
       "config": {
         "googleMapsApiKey": "COLOQUE_SUA_GOOGLE_MAPS_IOS_KEY_AQUI"
@@ -48,7 +52,11 @@
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
-        "POST_NOTIFICATIONS"
+        "POST_NOTIFICATIONS",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "MEDIA_LIBRARY"
       ],
       "config": {
         "googleMaps": {

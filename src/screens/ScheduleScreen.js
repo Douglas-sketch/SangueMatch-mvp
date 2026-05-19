@@ -82,7 +82,7 @@ export default function ScheduleScreen({ route, navigation }) {
         </View>
       </AnimatedView>
 
-      <Button title="Confirmar agendamento" onPress={confirm} disabled={!center || !selectedDate || !selectedTime} loading={loading} style={styles.button} />
+      <Button title="Confirmar agendamento" accessibilityLabel="Confirmar agendamento" accessibilityHint="Confirma sua doação e agenda um lembrete" onPress={confirm} disabled={!center || !selectedDate || !selectedTime} loading={loading} style={styles.button} />
 
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalBackdrop}>
@@ -93,6 +93,7 @@ export default function ScheduleScreen({ route, navigation }) {
             <Text style={styles.modalTitle}>Agendamento confirmado!</Text>
             <Text style={styles.modalText}>{center?.name} • {formatDate(`${selectedDate}T00:00:00`)} às {selectedTime}</Text>
             <Text style={styles.modalHint}>Também agendei um lembrete para o dia anterior às 18h, se as notificações estiverem permitidas.</Text>
+            <Button title="Ver checklist" variant="ghost" onPress={() => { setModalVisible(false); navigation.navigate('PreDonationChecklist'); }} />
             <Button title="Voltar para Home" onPress={() => { setModalVisible(false); navigation.navigate('Main', { screen: 'Home' }); }} />
           </AnimatedView>
         </View>
