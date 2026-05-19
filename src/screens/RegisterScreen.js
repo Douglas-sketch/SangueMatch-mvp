@@ -38,7 +38,8 @@ export default function RegisterScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const errors = useMemo(() => validateStep(step, form), [step, form]);
-  const canContinue = Object.keys(errors).length === 0;
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const canContinue = Object.keys(errors).length === 0 && (step !== 2 || termsAccepted);
 
   function update(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -122,6 +123,25 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={styles.permissionBody}>Usadas para lembrar você um dia antes do agendamento.</Text>
               </View>
             </View>
+            <View style={styles.termsRow}>
+              <Pressable
+                onPress={() => setTermsAccepted((current) => !current)}
+                accessibilityRole="checkbox"
+                accessibilityLabel="Aceito os termos de uso e política de privacidade"
+                accessibilityState={{ checked: termsAccepted }}
+                style={styles.checkbox}
+              >
+                <View style={[styles.checkboxBox, termsAccepted && styles.checkboxActive]}>
+                  {termsAccepted ? <MaterialCommunityIcons name="check" color="#fff" size={16} /> : null}
+                </View>
+                <Text style={styles.checkboxLabel}>
+                  Li e aceito os{' '}
+                  <Text style={styles.link} onPress={() => navigation.navigate('Terms')}>
+                    Termos de Uso e a Política de Privacidade
+                  </Text>
+                </Text>
+              </Pressable>
+            </View>
           </AnimatedView>
         ) : null}
       </ScrollView>
@@ -148,4 +168,10 @@ const styles = StyleSheet.create({
   permissionCard: { backgroundColor: '#fff', borderRadius: 22, padding: 18, borderWidth: 0.5, borderColor: colors.line, flexDirection: 'row', gap: 14, marginBottom: 14 },
   permissionTitle: { fontFamily: fonts.displayBold, color: colors.secondary, fontSize: 20 },
   permissionBody: { fontFamily: fonts.regular, color: colors.muted, lineHeight: 21, marginTop: 4 },
+  termsRow: { marginTop: 20 },
+  checkbox: { flexDirection: 'row', alignItems: 'center' },
+  checkboxBox: { width: 24, height: 24, borderWidth: 1, borderColor: colors.primary, borderRadius: 4, justifyContent: 'center', alignItems: 'center' },
+  checkboxActive: { backgroundColor: colors.primary },
+  checkboxLabel: { marginLeft: 8, fontFamily: fonts.regular, color: colors.secondary },
+  link: { color: colors.primary, textDecorationLine: 'underline' },
 });

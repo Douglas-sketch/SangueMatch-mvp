@@ -3,6 +3,7 @@ import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View }
 import { useFontScale } from '../hooks/useFontScale';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useFontScale } from '../hooks/useFontScale';
 
 import AnimatedView from '../components/AnimatedView';
 import Card from '../components/Card';
@@ -37,6 +38,14 @@ export default function HomeScreen({ navigation }) {
 
       <AnimatedView delay={80}>
         <StatusCard status={stats.donationStatus} />
+        {stats.donationStatus?.eligible ? (
+          <Button
+            title="Checklist pré-doação"
+            onPress={() => navigation.navigate('PreDonationChecklist')}
+            style={styles.checklistButton}
+            accessibilityHint="Abre o checklist pré-doação para você revisar antes de agendar."
+          />
+        ) : null}
       </AnimatedView>
 
       <View style={styles.statsGrid}>
@@ -96,4 +105,5 @@ const styles = StyleSheet.create({
   urgencyType: { fontFamily: fonts.displayBold, color: colors.secondary, fontSize: 26 },
   urgencyLevel: { fontFamily: fonts.bold, color: colors.muted, textTransform: 'uppercase', fontSize: 12, marginTop: 4 },
   whiteText: { color: '#fff' },
+  checklistButton: { marginTop: 16 },
 });

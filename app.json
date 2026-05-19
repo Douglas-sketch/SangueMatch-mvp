@@ -29,7 +29,8 @@
         {
           "fonts": []
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "ios": {
       "supportsTablet": true,
@@ -55,8 +56,12 @@
         "POST_NOTIFICATIONS",
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
+<<<<<<< HEAD
         "WRITE_EXTERNAL_STORAGE",
         "MEDIA_LIBRARY"
+=======
+        "WRITE_EXTERNAL_STORAGE"
+>>>>>>> 78fb240 (Correções)
       ],
       "config": {
         "googleMaps": {

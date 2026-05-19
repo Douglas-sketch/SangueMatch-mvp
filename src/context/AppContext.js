@@ -89,8 +89,13 @@ export function AppProvider({ children }) {
     await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(next));
   }
 
+<<<<<<< HEAD
 
   async function updateAvatar(uri) {
+=======
+  async function updateAvatar(uri) {
+    if (!user) return;
+>>>>>>> 78fb240 (Correções)
     const next = { ...user, avatar: uri };
     setUser(next);
     await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(next));
