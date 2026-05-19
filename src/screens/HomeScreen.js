@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useFontScale } from '../hooks/useFontScale';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -16,6 +17,7 @@ import { getGreeting } from '../utils/date';
 
 export default function HomeScreen({ navigation }) {
   const { user, stats, urgencies } = useApp();
+  const scale = useFontScale();
   const { centers, loading, reload, usingFallback } = useHemocenters(true);
   const nearest = centers[0];
 
@@ -58,7 +60,8 @@ export default function HomeScreen({ navigation }) {
         <SectionTitle title="Hemocentro mais próximo" subtitle={usingFallback ? 'Usando fallback de Recife/PE porque a API não retornou resultados.' : 'Calculado com sua localização atual.'} />
         {loading && !nearest ? <ActivityIndicator color={colors.primary} /> : null}
         {nearest ? <HemocenterCard center={nearest} compact onSchedule={(center) => navigation.navigate('Schedule', { center })} /> : null}
-        {nearest ? <Button title="Agendar uma doação" onPress={() => navigation.navigate('Schedule', { center: nearest })} /> : null}
+        {nearest ? <Button title="Agendar uma doação" accessibilityLabel="Agendar uma doação" accessibilityHint="Abre a tela de agendamento com o hemocentro mais próximo" onPress={() => navigation.navigate('Schedule', { center: nearest })} /> : null}
+        {stats?.donationStatus?.eligible ? <Button title="Checklist pré-doação" variant="ghost" onPress={() => navigation.navigate('PreDonationChecklist")} /> : null}
       </AnimatedView>
 
       <AnimatedView delay={240}>

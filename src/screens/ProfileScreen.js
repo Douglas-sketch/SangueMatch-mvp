@@ -1,101 +1,62 @@
 import React from 'react';
-import { Alert, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
-import AnimatedView from '../components/AnimatedView';
 import Card from '../components/Card';
 import SectionTitle from '../components/SectionTitle';
-import { colors, fonts } from '../constants/theme';
 import { useApp } from '../context/AppContext';
-import { formatDate } from '../utils/date';
+import { useThemeMode } from '../context/ThemeContext';
+import { fonts } from '../constants/theme';
+import { useFontScale } from '../hooks/useFontScale';
 
-function MenuItem({ icon, title, onPress }) {
-  return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={title} style={({ pressed }) => [styles.menuItem, pressed && styles.pressed]}>
-      <MaterialCommunityIcons name={icon} color={colors.primary} size={24} />
-      <Text style={styles.menuText}>{title}</Text>
-      <MaterialCommunityIcons name="chevron-right" color={colors.muted} size={24} />
-    </Pressable>
-  );
+function MenuItem({ icon, title, onPress, hint, theme, scale }) {
+  return <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={title} accessibilityHint={hint} style={[styles.menuItem, { borderBottomColor: theme.border }]}><MaterialCommunityIcons name={icon} size={22} color={theme.primary} /><Text style={{ flex: 1, color: theme.text, fontFamily: fonts.bold, fontSize: 16 * scale }}>{title}</Text><MaterialCommunityIcons name="chevron-right" size={22} color={theme.muted} /></Pressable>;
 }
 
 export default function ProfileScreen({ navigation }) {
-  const { user, stats, donations, logout, appointment } = useApp();
+  const { user, stats, donations, updateAvatar, logout } = useApp();
+  const { theme } = useThemeMode();
+  const scale = useFontScale();
 
-  async function shareApp() {
-    await Share.share({ message: 'Conheça o SangueMatch: doe sangue, encontre hemocentros e salve vidas. 🩸' });
-  }
-
-  function confirmLogout() {
-    Alert.alert('Sair do SangueMatch?', 'Seus dados locais de perfil serão removidos deste dispositivo.', [
+  const pickAvatar = () => {
+    Alert.alert('Foto de perfil', 'Escolha uma opção', [
+      { text: 'Tirar foto', onPress: async () => { const result = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 }); if (!result.canceled) updateAvatar(result.assets[0].uri); } },
+      { text: 'Escolher da galeria', onPress: async () => { const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 }); if (!result.canceled) updateAvatar(result.assets[0].uri); } },
       { text: 'Cancelar', style: 'cancel' },
-      { text: 'Sair', style: 'destructive', onPress: logout },
     ]);
-  }
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <AnimatedView>
-        <Card style={styles.profileCard}>
-          <View style={styles.avatar}><Text style={styles.avatarText}>{user?.name?.[0]?.toUpperCase() || 'S'}</Text></View>
-          <Text style={styles.name}>{user?.name}</Text>
-          <Text style={styles.meta}>{user?.bloodType || 'Tipo não informado'} • {stats.level}</Text>
-        </Card>
-      </AnimatedView>
+    <ScrollView style={{ flex: 1, backgroundColor: theme.background }} contentContainerStyle={{ padding: 20, paddingTop: 58, paddingBottom: 120 }}>
+      <Card style={{ alignItems: 'center', backgroundColor: theme.card, borderColor: theme.border }}>
+        <Pressable onPress={pickAvatar} accessibilityRole="button" accessibilityLabel="Trocar foto" accessibilityHint="Toca para trocar sua foto de perfil" style={styles.avatarWrap}>
+          {user?.avatar ? <Image source={{ uri: user.avatar }} style={styles.avatar} /> : <View style={[styles.avatar, { backgroundColor: theme.primary }]}><Text style={styles.avatarText}>{user?.name?.[0]?.toUpperCase() || 'S'}</Text></View>}
+          <View style={[styles.cameraBadge, { backgroundColor: theme.primary }]}><MaterialCommunityIcons name="camera" color="#fff" size={14} /></View>
+        </Pressable>
+        <Text style={{ fontFamily: fonts.displayBold, color: theme.text, fontSize: 28 * scale }}>{user?.name}</Text>
+        <Text style={{ fontFamily: fonts.medium, color: theme.muted, fontSize: 14 * scale }}>{user?.bloodType} • {stats.level}</Text>
+      </Card>
 
-      {appointment ? (
-        <AnimatedView delay={70}>
-          <Card style={styles.nextCard}>
-            <Text style={styles.nextTitle}>Próximo agendamento</Text>
-            <Text style={styles.nextText}>{appointment.center.name}</Text>
-            <Text style={styles.meta}>{formatDate(`${appointment.date}T00:00:00`)} às {appointment.time}</Text>
-          </Card>
-        </AnimatedView>
-      ) : null}
+      <SectionTitle title="Histórico" />
+      {donations.length === 0 ? <Card style={{ backgroundColor: theme.card, borderColor: theme.border }}><Text style={{ color: theme.muted }}>Nenhuma doação registrada ainda.</Text></Card> : donations.map((d) => <Card key={d.id} style={{ backgroundColor: theme.card, borderColor: theme.border, marginBottom: 8 }}><Text style={{ color: theme.text, fontFamily: fonts.bold }}>{d.local}</Text><Text style={{ color: theme.muted }}>{d.status}</Text></Card>)}
 
-      <AnimatedView delay={120}>
-        <SectionTitle title="Histórico de doações" />
-        {donations.map((donation) => (
-          <Card key={donation.id} style={styles.historyCard}>
-            <View style={styles.historyIcon}><MaterialCommunityIcons name="check" color="#fff" size={18} /></View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.historyLocal}>{donation.local}</Text>
-              <Text style={styles.historyDate}>{formatDate(donation.date)} • {donation.status}</Text>
-            </View>
-          </Card>
-        ))}
-      </AnimatedView>
-
-      <AnimatedView delay={180}>
-        <SectionTitle title="Menu" />
-        <Card style={styles.menuCard}>
-          <MenuItem icon="accessibility" title="Acessibilidade" onPress={() => navigation.navigate('Accessibility')} />
-          <MenuItem icon="bell-outline" title="Notificações" onPress={() => Alert.alert('Notificações', 'Os lembretes são configurados no agendamento.')} />
-          <MenuItem icon="share-variant" title="Compartilhar app" onPress={shareApp} />
-          <MenuItem icon="logout" title="Sair" onPress={confirmLogout} />
-        </Card>
-      </AnimatedView>
+      <SectionTitle title="Menu" />
+      <Card style={{ backgroundColor: theme.card, borderColor: theme.border, padding: 0 }}>
+        <MenuItem icon="account-edit" title="Editar perfil" onPress={() => navigation.navigate('EditProfile')} hint="Abre formulário para atualizar seus dados" theme={theme} scale={scale} />
+        <MenuItem icon="qrcode" title="Meu QR Code" onPress={() => navigation.navigate('QRCode')} hint="Abre seu QR Code de doador" theme={theme} scale={scale} />
+        <MenuItem icon="shield-account" title="Termos e Privacidade" onPress={() => navigation.navigate('Terms')} hint="Mostra os termos de uso e privacidade" theme={theme} scale={scale} />
+        <MenuItem icon="accessibility" title="Acessibilidade" onPress={() => navigation.navigate('Accessibility')} hint="Abre ajustes de acessibilidade" theme={theme} scale={scale} />
+        <MenuItem icon="logout" title="Sair" onPress={logout} hint="Remove seus dados deste dispositivo" theme={theme} scale={scale} />
+      </Card>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 20, paddingTop: 58, paddingBottom: 110 },
-  profileCard: { alignItems: 'center' },
-  avatar: { width: 86, height: 86, borderRadius: 28, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  avatarText: { color: '#fff', fontFamily: fonts.displayBold, fontSize: 40 },
-  name: { fontFamily: fonts.displayBold, color: colors.secondary, fontSize: 28, textAlign: 'center' },
-  meta: { fontFamily: fonts.medium, color: colors.muted, marginTop: 4 },
-  nextCard: { marginTop: 14, borderColor: 'rgba(76,175,133,0.45)' },
-  nextTitle: { fontFamily: fonts.bold, color: colors.success, textTransform: 'uppercase', fontSize: 12 },
-  nextText: { fontFamily: fonts.displayBold, color: colors.secondary, fontSize: 22, marginTop: 4 },
-  historyCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10, padding: 14 },
-  historyIcon: { width: 34, height: 34, borderRadius: 12, backgroundColor: colors.success, alignItems: 'center', justifyContent: 'center' },
-  historyLocal: { fontFamily: fonts.bold, color: colors.secondary },
-  historyDate: { fontFamily: fonts.regular, color: colors.muted, marginTop: 2 },
-  menuCard: { padding: 0, overflow: 'hidden' },
-  menuItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 18, borderBottomWidth: 0.5, borderBottomColor: colors.line },
-  menuText: { flex: 1, fontFamily: fonts.bold, color: colors.secondary, fontSize: 16 },
-  pressed: { opacity: 0.7 },
+  avatarWrap: { marginBottom: 12 },
+  avatar: { width: 86, height: 86, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { color: '#fff', fontSize: 40, fontFamily: fonts.displayBold },
+  cameraBadge: { position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  menuItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderBottomWidth: 1 },
 });

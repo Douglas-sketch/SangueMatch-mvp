@@ -76,6 +76,7 @@ export function AppProvider({ children }) {
       bloodType: nextUser.bloodType || 'Não sei',
       createdAt: nextUser.createdAt || new Date().toISOString(),
       referrals: nextUser.referrals ?? 1,
+      avatar: nextUser.avatar || '',
     };
     setUser(hydrated);
     await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(hydrated));
@@ -84,6 +85,13 @@ export function AppProvider({ children }) {
 
   async function updateUser(partial) {
     const next = { ...user, ...partial };
+    setUser(next);
+    await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(next));
+  }
+
+
+  async function updateAvatar(uri) {
+    const next = { ...user, avatar: uri };
     setUser(next);
     await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(next));
   }
@@ -160,6 +168,7 @@ export function AppProvider({ children }) {
     completeOnboarding,
     saveUser,
     updateUser,
+    updateAvatar,
     requestAndStoreLocation,
     addDonation,
     saveAppointment,

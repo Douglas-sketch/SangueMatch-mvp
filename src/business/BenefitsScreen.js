@@ -1,0 +1,1 @@
+import React from 'react'; import { View, Text } from 'react-native'; export default function BenefitsScreen(){return <View style={{flex:1,padding:20}}><Text>Benefícios</Text><Text>Parceiros: Farmácia São João, SmartFit, iFood, Cinemark.</Text></View>}

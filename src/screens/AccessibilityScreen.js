@@ -5,6 +5,7 @@ import Card from '../components/Card';
 import SectionTitle from '../components/SectionTitle';
 import { colors, fonts, radius } from '../constants/theme';
 import { useApp } from '../context/AppContext';
+import { useThemeMode } from '../context/ThemeContext';
 
 function ToggleRow({ title, subtitle, value, onValueChange }) {
   return (
@@ -20,6 +21,7 @@ function ToggleRow({ title, subtitle, value, onValueChange }) {
 
 export default function AccessibilityScreen() {
   const { accessibility, updateAccessibility } = useApp();
+  const { mode, toggleTheme } = useThemeMode();
   const levels = [
     { id: 'small', label: 'Pequena' },
     { id: 'normal', label: 'Normal' },
@@ -30,6 +32,7 @@ export default function AccessibilityScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <SectionTitle title="Acessibilidade" subtitle="Ajustes locais para melhorar leitura, contraste e navegação por leitor de tela." />
       <Card>
+        <ToggleRow title="Modo escuro" subtitle="Ative o tema escuro global" value={mode === 'dark'} onValueChange={(value) => toggleTheme(value ? 'dark' : 'light')} />
         <ToggleRow title="Alto contraste" subtitle="Aumenta contraste visual nos cards." value={accessibility.highContrast} onValueChange={(value) => updateAccessibility({ highContrast: value })} />
         <ToggleRow title="Leitor de tela" subtitle="Mantém foco em labels claros e botões descritivos." value={accessibility.screenReader} onValueChange={(value) => updateAccessibility({ screenReader: value })} />
         <ToggleRow title="Modo daltônico" subtitle="Troca reforços visuais de cor por estados e textos." value={accessibility.colorBlind} onValueChange={(value) => updateAccessibility({ colorBlind: value })} />

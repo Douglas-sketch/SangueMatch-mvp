@@ -5,4 +5,6 @@ export const STORAGE_KEYS = {
   APPOINTMENT: '@sanguematch:appointment',
   ACCESSIBILITY: '@sanguematch:accessibility',
   URGENCY: '@sanguematch:urgency',
+  THEME: '@sanguematch:theme',
+  LANGUAGE: '@sanguematch:language',
 };
