@@ -38,7 +38,6 @@ export default function RegisterScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const errors = useMemo(() => validateStep(step, form), [step, form]);
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const canContinue = Object.keys(errors).length === 0 && (step !== 2 || termsAccepted);
 
   function update(field, value) {
