@@ -3,7 +3,6 @@ import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View }
 import { useFontScale } from '../hooks/useFontScale';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFontScale } from '../hooks/useFontScale';
 
 import AnimatedView from '../components/AnimatedView';
 import Card from '../components/Card';
