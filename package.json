@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "doctor": "npx expo-doctor",
+    "doctor": "node ./scripts/doctor.js",
     "reset-data": "node ./scripts/reset-data.js"
   },
   "dependencies": {
