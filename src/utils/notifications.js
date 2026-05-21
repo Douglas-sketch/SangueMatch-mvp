@@ -14,10 +14,21 @@ export async function configureNotifications() {
 
 export async function requestNotificationPermission() {
   await configureNotifications();
+
   const current = await Notifications.getPermissionsAsync();
-  if (current.granted) return true;
-  const requested = await Notifications.requestPermissionsAsync();
-  return requested.granted;
+  if (current.granted || current.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+    return true;
+  }
+
+  const requested = await Notifications.requestPermissionsAsync({
+    ios: {
+      allowAlert: true,
+      allowBadge: true,
+      allowSound: true,
+    },
+  });
+
+  return requested.granted || requested.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
 }
 
 export async function scheduleDonationReminder({ date, centerName }) {
@@ -25,7 +36,19 @@ export async function scheduleDonationReminder({ date, centerName }) {
   if (!granted) return null;
 
   const triggerDate = new Date(date);
-  if (triggerDate <= new Date()) return null;
+  if (Number.isNaN(triggerDate.getTime()) || triggerDate <= new Date()) return null;
+
+  const trigger =
+    Platform.OS === 'android'
+      ? {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          channelId: 'lembretes',
+          date: triggerDate,
+        }
+      : {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: triggerDate,
+        };
 
   return Notifications.scheduleNotificationAsync({
     content: {
@@ -33,10 +56,6 @@ export async function scheduleDonationReminder({ date, centerName }) {
       body: `Lembrete do SangueMatch: você tem agendamento em ${centerName}. Hidrate-se e leve documento com foto.`,
       sound: true,
     },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.DATE,
-      channelId: 'lembretes',
-      date: triggerDate,
-    },
+    trigger,
   });
 }
