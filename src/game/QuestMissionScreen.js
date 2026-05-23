@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming, withSpring } from 'react-native-reanimated';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { useThemeMode } from '../context/ThemeContext';
@@ -52,8 +52,8 @@ export default function QuestMissionScreen({ navigation }) {
     setAnswerState(null);
   }
 
-  function advanceStage() {
-    if (lives <= 0) {
+  function advanceStage(nextLives = lives) {
+    if (nextLives <= 0) {
       setPhase('defeat');
       return;
     }
@@ -75,16 +75,18 @@ export default function QuestMissionScreen({ navigation }) {
     setAnswerState(isCorrect ? 'correct' : 'wrong');
     setPhase('answered');
 
+    const nextLives = isCorrect ? lives : Math.max(0, lives - 1);
+
     if (isCorrect) {
       setScore((current) => current + 50);
       setFeedback('+50 XP');
     } else {
-      setLives((current) => Math.max(0, current - 1));
+      setLives(nextLives);
       setFeedback(question.explanation);
     }
 
     setTimeout(() => {
-      advanceStage();
+      advanceStage(nextLives);
     }, 1200);
   }
 
